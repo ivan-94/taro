@@ -156,8 +156,8 @@ class Controls extends Component {
                       this.progressDimentions.width = rect.width
                     }
                   }}>
-                  <div className='taro-video-progress-buffered' style='width: 100%;' />
-                  <div className='taro-video-ball' ref={this.getProgressBallRef} onTouchStart={this.onDragProgressBallStart} style={`left: ${formattedDuration ? (this.currentTime / duration) * 100 : 0}%`}>
+                  <div className='taro-video-progress-buffered' style={{width: '100%'}} />
+                  <div className='taro-video-ball' ref={this.getProgressBallRef} onTouchStart={this.onDragProgressBallStart} style={{left: `${formattedDuration ? (this.currentTime / duration) * 100 : 0}%`}}>
                     <div className='taro-video-inner' />
                   </div>
                 </div>

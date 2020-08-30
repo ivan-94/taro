@@ -616,7 +616,7 @@ export default class Picker extends Nerv.Component {
     const clsSlider = classNames('weui-picker', 'weui-animate-slide-up', {
       'weui-animate-slide-down': this.state.fadeOut
     })
-    const shouldDivHidden = this.state.hidden ? 'display: none;' : ''
+    const shouldDivHidden = this.state.hidden ? {display: 'none'} : {}
 
     // // 给 children 绑定事件
     // const children = Nerv.Children.map(this.props.children, child => {

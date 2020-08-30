@@ -37,7 +37,7 @@ export default class Tabbar extends Taro.Component {
 
     return (
       <a key={index} href='javascript:;' className={className} onClick={this.onClick}>
-        <span style='display: inline-block;position: relative;'>
+        <span style={{display: 'inline-block', position: 'relative'}}>
           <img src={iconPath} alt='' className='weui-tabbar__icon' />
           {badgeText &&
             <span

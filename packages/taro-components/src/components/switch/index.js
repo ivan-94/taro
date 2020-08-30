@@ -57,7 +57,7 @@ class Switch extends Nerv.Component {
         backgroundColor: color || '04BE02'
       }
     } else {
-      sty = ''
+      sty = {}
     }
     return (
       <input
