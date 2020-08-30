@@ -229,6 +229,7 @@ class Router extends Taro.Component<Props, State> {
               componentLoader={componentLoader}
               isIndex={isIndex}
               key={key}
+              routeKey={key}
               k={k}
               isTabBar={isTabBar}
               isRedirect={isRedirect}

@@ -11,6 +11,7 @@ import * as Types from '../utils/types'
 type RouteProps = RouteObj & {
   currentLocation: Location;
   k: number;
+  routeKey?: string
   collectComponent: Function;
   customRoutes: Types.CustomRoutes;
 }
@@ -61,7 +62,7 @@ class Route extends Taro.Component<RouteProps, {}> {
     }
   }
 
-  computeMatch (currentLocation: Location, pKey = this.props.key, pPath = this.props.path, isIndex = this.props.isIndex, isTabBar = this.props.isTabBar) {
+  computeMatch (currentLocation: Location, pKey = this.props.routeKey, pPath = this.props.path, isIndex = this.props.isIndex, isTabBar = this.props.isTabBar) {
     let pathname = currentLocation.path;
     const key = currentLocation.state.key;
 
@@ -93,7 +94,7 @@ class Route extends Taro.Component<RouteProps, {}> {
         ref.props.location = this.state.location
       }
       this.componentRef = ref
-      this.props.collectComponent(ref, this.props.key)
+      this.props.collectComponent(ref, this.props.routeKey)
     }
   }
 
@@ -127,7 +128,7 @@ class Route extends Taro.Component<RouteProps, {}> {
   componentWillReceiveProps (nProps: RouteProps) {
     const isRedirect = nProps.isRedirect
     const lastMatched = this.matched
-    const nextMatched = this.computeMatch(nProps.currentLocation, nProps.key, nProps.path, nProps.isIndex, nProps.isTabBar)
+    const nextMatched = this.computeMatch(nProps.currentLocation, nProps.routeKey, nProps.path, nProps.isIndex, nProps.isTabBar)
 
     this.matched = nextMatched
 
