@@ -18,7 +18,11 @@ if (!fs.existsSync(TARGET_DIR)) {
   fs.mkdirSync(TARGET_DIR);
 }
 
-packages.forEach(p => {
+const specifiedPackages = process.argv
+  .filter(v => v.startsWith("-p"))
+  .map(i => i.slice(3));
+
+(specifiedPackages.length ? specifiedPackages : packages).forEach(p => {
   const fullpath = path.join(ROOT, p);
   const pkg = JSON.parse(
     fs.readFileSync(path.join(fullpath, "package.json")).toString()
