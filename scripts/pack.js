@@ -9,13 +9,9 @@ const lernaPackage = JSON.parse(
 );
 
 const { packages, version } = lernaPackage;
-const TARGET_DIR = path.join(TARGET, version);
 
 if (!fs.existsSync(TARGET)) {
   fs.mkdirSync(TARGET);
-}
-if (!fs.existsSync(TARGET_DIR)) {
-  fs.mkdirSync(TARGET_DIR);
 }
 
 const specifiedPackages = process.argv
@@ -33,6 +29,6 @@ const specifiedPackages = process.argv
   ch.execSync("npm pack --ignore-scripts");
   fs.renameSync(
     path.join(fullpath, tarName),
-    path.join(TARGET_DIR, packagedName + ".tgz")
+    path.join(TARGET, packagedName + ".tgz")
   );
 });
