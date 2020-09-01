@@ -296,7 +296,11 @@ const getModule = (appPath: string, {
     test: jsxReg,
     use: {
       babelLoader: getBabelLoader([defaultBabelLoaderOption, additionalBabelOptions])
-    }
+    },
+    exclude: [{
+      test: /node_modules/,
+      exclude: [(i) => isEsnextModule(i)]
+    }]
   }
   rule.media = {
     test: mediaReg,
