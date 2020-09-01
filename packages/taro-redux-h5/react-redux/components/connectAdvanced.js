@@ -1,5 +1,5 @@
 import hoistStatics from 'hoist-non-react-statics'
-import { createElement, useContext, useMemo, useRef, useReducer } from '../../src/compat'
+import { createElement, forwardRef as _forwardRef, memo, useContext, useMemo, useRef, useReducer } from '../../src/compat'
 import { isValidElementType, isContextConsumer } from 'react-is'
 import Subscription from '../utils/Subscription'
 import { useIsomorphicLayoutEffect } from '../utils/useIsomorphicLayoutEffect'
@@ -193,7 +193,7 @@ export default function connectAdvanced(
     withRef = false,
 
     // use React's forwardRef to expose a ref of the wrapped component
-    forwardRef = false,
+    forwardRef = true,
 
     // the context consumer to use
     context = ReactReduxContext,
@@ -471,13 +471,13 @@ export default function connectAdvanced(
     }
 
     // If we're in "pure" mode, ensure our wrapper component only re-renders when incoming props have changed.
-    const Connect = pure ? React.memo(ConnectFunction) : ConnectFunction
+    const Connect = pure ? memo(ConnectFunction) : ConnectFunction
 
     Connect.WrappedComponent = WrappedComponent
     Connect.displayName = displayName
 
     if (forwardRef) {
-      const forwarded = React.forwardRef(function forwardConnectRef(
+      const forwarded = _forwardRef(function forwardConnectRef(
         props,
         ref
       ) {

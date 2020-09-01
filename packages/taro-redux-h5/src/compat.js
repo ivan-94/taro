@@ -9,5 +9,7 @@ export {
   useMemo,
   useEffect,
   useLayoutEffect,
+  forwardRef,
+  memo
 } from "nervjs"
 export { Component } from "@tarojs/taro-h5"
