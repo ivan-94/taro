@@ -23,7 +23,8 @@ export default {
   external: [
     'nervjs',
     'redux',
-    '@tarojs/taro-h5'
+    '@tarojs/taro-h5',
+    'react-is',
   ],
   plugins: [
     alias({
