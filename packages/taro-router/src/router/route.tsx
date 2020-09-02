@@ -186,7 +186,7 @@ class Route extends Taro.Component<RouteProps, {}> {
         className="taro_page"
         ref={this.getWrapRef}
         style={{ minHeight: '100%' }}>
-        <WrappedComponent ref={this.getRef} location={this.state.location} />
+        <WrappedComponent getRef={this.getRef} location={this.state.location} />
       </div>
     )
   }

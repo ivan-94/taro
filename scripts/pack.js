@@ -29,6 +29,6 @@ const specifiedPackages = process.argv
   ch.execSync("npm pack --ignore-scripts");
   fs.renameSync(
     path.join(fullpath, tarName),
-    path.join(TARGET, packagedName + ".tgz")
+    path.join(TARGET, packagedName + "." + pkg.version + ".tgz")
   );
 });
