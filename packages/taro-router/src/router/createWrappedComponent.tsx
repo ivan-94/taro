@@ -49,7 +49,7 @@ const createWrappedComponent = (WrapperComponent: Types.PageComponent) => {
 
         tryToCall(
           this.wrappedInstance && this.wrappedInstance.componentDidShow,
-          this
+          this.wrappedInstance
         )
         if (this.listeners['show']) {
           this.listeners['show'].forEach(f => f())
@@ -59,7 +59,7 @@ const createWrappedComponent = (WrapperComponent: Types.PageComponent) => {
       const newComponentDidHide = () => {
         tryToCall(
           this.wrappedInstance && this.wrappedInstance.componentDidHide,
-          this
+          this.wrappedInstance
         )
         if (this.listeners['hide']) {
           this.listeners['hide'].forEach(f => f())
