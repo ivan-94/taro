@@ -88,13 +88,13 @@ class Route extends Taro.Component<RouteProps, {}> {
     if (ref) this.containerRef = ref
   }
 
-  getRef = ref => {
+  getRef = (ref, page) => {
     if (ref) {
       if (ref.props.location !== this.state.location) {
         ref.props.location = this.state.location
       }
       this.componentRef = ref
-      this.props.collectComponent(ref, this.props.routeKey)
+      this.props.collectComponent(page, this.props.routeKey)
     }
   }
 
@@ -102,8 +102,6 @@ class Route extends Taro.Component<RouteProps, {}> {
     if (this.matched && this.componentRef) {
       this.setState({
         location: props.currentLocation
-      }, () => {
-        this.componentRef.props.location = this.state.location
       })
     }
     props.componentLoader()

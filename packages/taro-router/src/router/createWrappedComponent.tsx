@@ -5,7 +5,7 @@ import * as Types from '../utils/types'
 import PageContext from './PageContext'
 
 const createWrappedComponent = (WrapperComponent: Types.PageComponent) => {
-  class RouteComponent extends Taro.Component<{ getRef: (ref: any) => void }> {
+  class RouteComponent extends Taro.Component<{ getRef: (ref: any, page: any) => void }> {
     get config() {
       return this.wrappedInstance && this.wrappedInstance.config
     }
@@ -14,7 +14,7 @@ const createWrappedComponent = (WrapperComponent: Types.PageComponent) => {
 
     wrappedInstanceRef = ref => {
       if (this.props.getRef) {
-        this.props.getRef(ref)
+        this.props.getRef(this, ref)
       }
       this.wrappedInstance = ref
     }
@@ -81,8 +81,9 @@ const createWrappedComponent = (WrapperComponent: Types.PageComponent) => {
       return (
         <PageContext.Provider value={this}>
           <WrapperComponent
-            ref={this.wrappedInstanceRef}
             {...this.props}
+            ref={this.wrappedInstanceRef}
+            getRef={this.wrappedInstanceRef}
           ></WrapperComponent>
         </PageContext.Provider>
       )

@@ -228,7 +228,7 @@ class Router extends Taro.Component<Props, State> {
               currentLocation={currentLocation}
               componentLoader={componentLoader}
               isIndex={isIndex}
-              key={key}
+              key={path + '_' + key}
               routeKey={key}
               k={k}
               isTabBar={isTabBar}
