@@ -170,12 +170,18 @@ const ${id.name} = ${generate(t.arrowFunctionExpression(params, body)).code}
           const classDecl = t.classDeclaration(id, t.memberExpression(t.identifier('Taro'), t.identifier('Component')), t.classBody([
             t.classMethod('method', t.identifier('render'), [], cloneBody)
           ]), [])
-          functionDecl.replaceWithMultiple([
-            classDecl,
-            t.expressionStatement(
-              t.assignmentExpression('=', t.memberExpression(id, t.identifier('__functional__')), t.booleanLiteral(true))
+
+          const sfcDecl = t.assignmentExpression(
+              "=",
+              t.memberExpression(id, t.identifier("__functional__")),
+              t.booleanLiteral(true)
             )
-          ])
+
+          const statment = functionDecl.getStatementParent()
+          if (statment) {
+            statment.insertAfter(sfcDecl)
+          }
+          functionDecl.replaceWith(classDecl);
         }
       },
       JSXAttribute (path) {
