@@ -17,7 +17,7 @@
     "build:docs": "node ./build/docs.js",
     "build:docs-api": "ts-node --project ./scripts/tsconfig.json ./scripts/docs-api.ts --verbose",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "release:only": "lerna exec -- npm publish",
+    "release:only": "lerna exec -- npm publish --registry=http://172.26.59.72:4873",
     "release:lerna": "lerna version --exact --no-git-tag-version",
     "release:beta": "lerna publish --force-publish=* --exact --skip-temp-tag  --preid=beta --npm-tag=beta",
     "release": "npm-run-all build release:lerna && npm run changelog && node ./build/docs-version.js",
