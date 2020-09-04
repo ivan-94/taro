@@ -137,12 +137,18 @@ class Route extends Taro.Component<RouteProps, {}> {
     }
 
     if (nextMatched) {
+      const initialed = this.componentRef
       nextTick(() => {
+        tryToCall(this.componentRef.componentDidShow, this.componentRef)
         this.showPage()
         scroller = scroller || getScroller()
         scroller.set(this.scrollPos)
       })
-      tryToCall(this.componentRef.componentDidShow, this.componentRef)
+
+      if (initialed) {
+        tryToCall(this.componentRef.componentDidShow, this.componentRef)
+      }
+
     } else {
       scroller = scroller || getScroller()
       this.scrollPos = scroller.get()
