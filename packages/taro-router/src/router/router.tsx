@@ -185,9 +185,12 @@ class Router extends Taro.Component<Props, State> {
       }
 
       this.lastLocation = history.location
-      this.setState({
-        location: history.location
-      })
+      // 避免多次触发渲染
+      if (this.state.location !== history.location) {
+        this.setState({
+          location: history.location
+        })
+      }
     })
     this.lastLocation = history.location
     this.push(this.lastLocation, this.isTabBar(this.lastLocation.path))
