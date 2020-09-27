@@ -1,3 +1,5 @@
+import { findDOMNode } from 'nervjs'
+
 function shouleBeObject (target) {
   if (target && typeof target === 'object') return { res: true }
   return {
@@ -162,8 +164,24 @@ const createCallbackManager = () => {
   }
 }
 
-const createScroller = () => {
-  let el = document.querySelector('.taro-tabbar__panel') || window
+const createScroller = (pageComponent) => {
+  const pageEl = pageComponent && findDOMNode(pageComponent)
+  const container = document.querySelector('.taro-tabbar__panel') || window
+
+  let el = (pageEl && pageEl.querySelector('.rmc-pull-to-refresh-content')) || pageEl || container
+
+  while (el && el !== container) {
+    const style = window.getComputedStyle(el)
+    if (
+      style.overflow === 'auto' ||
+      style.overflow === 'scroll' ||
+      style.overflowY === 'auto' ||
+      style.overflowY === 'scroll'
+    ) {
+      break
+    }
+    el = el.parentElement
+  }
 
   const getScrollHeight = el === window
     ? () => document.documentElement.scrollHeight
