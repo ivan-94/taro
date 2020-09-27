@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/NervJS/taro#readme",
   "dependencies": {
+    "@tarojs/helper": "2.2.16",
     "@tarojs/taro": "2.2.16",
     "@tarojs/taro-h5": "2.2.16",
     "autoprefixer": "8.6.4",

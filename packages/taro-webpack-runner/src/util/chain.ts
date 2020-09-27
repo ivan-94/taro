@@ -8,6 +8,7 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { join, resolve } from 'path'
 import * as webpack from 'webpack'
 import { PostcssOption, IPostcssOption, ICopyOptions } from '@tarojs/taro/types/compile'
+import { REG_STYLE } from '@tarojs/helper'
 
 import { recursiveMerge } from '.'
 import { getPostcssPlugins } from '../config/postcss.conf'
@@ -98,7 +99,7 @@ const getHtmlWebpackPlugin = pipe(mergeOption, listify, partial(getPlugin, HtmlW
 const getDefinePlugin = pipe(mergeOption, listify, partial(getPlugin, webpack.DefinePlugin))
 const getHotModuleReplacementPlugin = partial(getPlugin, webpack.HotModuleReplacementPlugin, [])
 const getCssoWebpackPlugin = ([cssoOption]) => {
-  return pipe(mergeOption, listify, partial(getPlugin, CssoWebpackPlugin))([defaultCSSCompressOption, cssoOption])
+  return pipe(listify, partial(getPlugin, CssoWebpackPlugin))([mergeOption([defaultCSSCompressOption, cssoOption]), REG_STYLE])
 }
 const getCopyWebpackPlugin = ({ copy, appPath }: {
   copy: ICopyOptions,
