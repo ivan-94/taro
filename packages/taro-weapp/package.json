@@ -3,6 +3,7 @@
   "version": "2.2.19",
   "description": "Taro weapp framework",
   "main": "index.js",
+  "module": "dist/index.esm.js",
   "files": [
     "dist",
     "src",
@@ -26,7 +27,6 @@
   "dependencies": {
     "@tarojs/taro": "2.2.19",
     "@tarojs/utils": "2.2.19",
-    "lodash": "^4.17.10",
-    "prop-types": "^15.6.1"
+    "lodash": "^4.17.10"
   }
 }

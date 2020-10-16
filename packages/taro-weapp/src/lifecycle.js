@@ -6,14 +6,9 @@ import {
   invokeEffects,
   getIsUsingDiff
 } from '@tarojs/taro'
-import PropTypes from 'prop-types'
 import { componentTrigger } from './create-component'
-import { cloneDeep, isEmptyObject, diffObjToPath, isFunction, isUndefined, isArray } from './util'
+import { cloneDeep, isEmptyObject, diffObjToPath, isFunction, isUndefined } from './util'
 import { enqueueRender } from './render-queue'
-
-const isDEV = typeof process === 'undefined' ||
-  !process.env ||
-  process.env.NODE_ENV !== 'production'
 
 function hasNewLifecycle (component) {
   const { constructor: { getDerivedStateFromProps }, getSnapshotBeforeUpdate } = component
@@ -44,15 +39,7 @@ function callGetSnapshotBeforeUpdate (component, props, state) {
 }
 
 export function updateComponent (component) {
-  const { props, __propTypes } = component
-  if (isDEV && __propTypes) {
-    let componentName = component.constructor.name
-    if (isUndefined(componentName)) {
-      const names = component.constructor.toString().match(/^function\s*([^\s(]+)/)
-      componentName = isArray(names) ? names[0] : 'Component'
-    }
-    PropTypes.checkPropTypes(__propTypes, props, 'prop', componentName)
-  }
+  const { props } = component
   const prevProps = component.prevProps || props
   component.props = prevProps
   if (component.__mounted && component._unsafeCallUpdate === true && !hasNewLifecycle(component) && component.componentWillReceiveProps) {
