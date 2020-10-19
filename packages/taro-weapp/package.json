@@ -1,6 +1,6 @@
 {
   "name": "@tarojs/taro-weapp",
-  "version": "2.2.19",
+  "version": "2.2.20",
   "description": "Taro weapp framework",
   "main": "index.js",
   "module": "dist/index.esm.js",
@@ -25,8 +25,8 @@
   "author": "O2Team",
   "license": "MIT",
   "dependencies": {
-    "@tarojs/taro": "2.2.19",
-    "@tarojs/utils": "2.2.19",
+    "@tarojs/taro": "2.2.20",
+    "@tarojs/utils": "2.2.20",
     "lodash": "^4.17.10"
   }
 }
