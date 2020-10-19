@@ -13,6 +13,17 @@ const PRELOAD_DATA_KEY = 'preload'
 const preloadInitedComponent = '$preloadComponent'
 const pageExtraFns = ['onPullDownRefresh', 'onReachBottom', 'onShareAppMessage', 'onPageScroll', 'onTabItemTap', 'onResize', 'onShareTimeline']
 
+function attachRef (ref, target) {
+  if (ref == null) {
+    return
+  }
+  if (typeof ref === 'function') {
+    ref(target)
+  } else if (typeof ref === 'object' && 'current' in ref) {
+    ref.current = target
+  }
+}
+
 function bindProperties (weappComponentConf, ComponentClass, isPage) {
   weappComponentConf.properties = {}
   if (isPage) {
@@ -273,6 +284,9 @@ export function componentTrigger (component, key, args) {
     component._dirty = false
     component._disable = false
     component.state = component.getState()
+    if (component.props._ref_) {
+      attachRef(component.props._ref_, component)
+    }
   }
   if (key === 'componentWillUnmount') {
     component._dirty = true
@@ -285,6 +299,9 @@ export function componentTrigger (component, key, args) {
     component._pendingCallbacks = []
     // refs
     detachAllRef(component)
+    if (component.props._ref_) {
+      attachRef(component.props._ref_, null)
+    }
   }
 }
 

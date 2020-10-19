@@ -387,101 +387,108 @@ class Transformer {
         }
         const loopCallExpr = path.findParent(p => isArrayMapCallExpression(p))
         const componentName = jsx.name.name
+        const type = DEFAULT_Component_SET.has(componentName) ? 'dom' : 'component'
         const refAttr = findJSXAttrByName(attrs, 'ref')
         if (!refAttr) {
           return
         }
-        const idAttr = findJSXAttrByName(attrs, 'id')
-        let id: string = createRandomLetters(5)
-        let idExpr: t.Expression
-        if (!idAttr) {
-          if (loopCallExpr && loopCallExpr.isCallExpression()) {
-            const [ func ] = loopCallExpr.node.arguments
-            let indexId: t.Identifier | null = null
-            if (t.isFunctionExpression(func) || t.isArrowFunctionExpression(func)) {
-              const params = func.params as t.Identifier[]
-              indexId = params[1]
-            }
-            if (indexId === null || !t.isIdentifier(indexId)) {
-              throw codeFrameError(path.node, '在循环中使用 ref 必须暴露循环的第二个参数 `index`')
-            }
-            attrs.push(t.jSXAttribute(t.jSXIdentifier('id'), t.jSXExpressionContainer(
-              t.binaryExpression('+', t.stringLiteral(id), indexId)
-            )))
-          } else {
-            attrs.push(t.jSXAttribute(t.jSXIdentifier('id'), t.stringLiteral(id)))
-          }
-        } else {
-          const idValue = idAttr.value
-          if (t.isStringLiteral(idValue)) {
-            id = idValue.value
-          } else if (t.isJSXExpressionContainer(idValue)) {
-            if (t.isStringLiteral(idValue.expression)) {
-              id = idValue.expression.value
-            } else {
-              idExpr = idValue.expression
-            }
-          }
-        }
+
+        // 不支持字符串 ref
         if (t.isStringLiteral(refAttr.value)) {
-          if (loopCallExpr) {
-            throw codeFrameError(refAttr, '循环中的 ref 只能使用函数。')
-          }
-          this.createStringRef(componentName, id, refAttr.value.value)
+          throw codeFrameError(refAttr, 'ref 不支持字符串')
         }
-        if (t.isJSXExpressionContainer(refAttr.value)) {
-          const expr = refAttr.value.expression
-          if (t.isStringLiteral(expr)) {
-            if (loopCallExpr) {
-              throw codeFrameError(refAttr, '循环中的 ref 只能使用函数。')
-            }
-            this.createStringRef(componentName, id, expr.value)
-          } else if (t.isArrowFunctionExpression(expr) || t.isMemberExpression(expr)) {
-            const type = DEFAULT_Component_SET.has(componentName) ? 'dom' : 'component'
-            if (loopCallExpr) {
-              this.loopRefs.set(path.parentPath.node as t.JSXElement, {
-                id: idExpr! || id,
-                fn: expr,
-                type,
-                component: path.parentPath as NodePath<t.JSXElement>
-              })
+
+        if (Adapters.weapp !== Adapter.type || type === 'dom') {
+          const idAttr = findJSXAttrByName(attrs, 'id')
+          let id: string = createRandomLetters(5)
+          let idExpr: t.Expression
+          if (!idAttr) {
+            if (loopCallExpr && loopCallExpr.isCallExpression()) {
+              const [ func ] = loopCallExpr.node.arguments
+              let indexId: t.Identifier | null = null
+              if (t.isFunctionExpression(func) || t.isArrowFunctionExpression(func)) {
+                const params = func.params as t.Identifier[]
+                indexId = params[1]
+              }
+              if (indexId === null || !t.isIdentifier(indexId)) {
+                throw codeFrameError(path.node, '在循环中使用 ref 必须暴露循环的第二个参数 `index`')
+              }
+              attrs.push(t.jSXAttribute(t.jSXIdentifier('id'), t.jSXExpressionContainer(
+                t.binaryExpression('+', t.stringLiteral(id), indexId)
+              )))
             } else {
+              attrs.push(t.jSXAttribute(t.jSXIdentifier('id'), t.stringLiteral(id)))
+            }
+          } else {
+            const idValue = idAttr.value
+            if (t.isStringLiteral(idValue)) {
+              id = idValue.value
+            } else if (t.isJSXExpressionContainer(idValue)) {
+              if (t.isStringLiteral(idValue.expression)) {
+                id = idValue.expression.value
+              } else {
+                idExpr = idValue.expression
+              }
+            }
+          }
+
+          if (t.isJSXExpressionContainer(refAttr.value)) {
+            const expr = refAttr.value.expression
+            if (t.isStringLiteral(expr)) {
+              throw codeFrameError(refAttr, '不支持字符串 ref')
+            } else if (t.isArrowFunctionExpression(expr) || t.isMemberExpression(expr)) {
+              if (loopCallExpr) {
+                this.loopRefs.set(path.parentPath.node as t.JSXElement, {
+                  id: idExpr! || id,
+                  fn: expr,
+                  type,
+                  component: path.parentPath as NodePath<t.JSXElement>
+                })
+              } else {
+                this.refs.push({
+                  type,
+                  id,
+                  fn: expr
+                })
+              }
+            } else if (t.isIdentifier(expr)) {
+              const binding = path.scope.getBinding(expr.name)
+              const decl = t.expressionStatement(
+                t.assignmentExpression(
+                  '=',
+                  t.memberExpression(t.thisExpression(), expr),
+                  expr
+                )
+              )
+              if (binding) {
+                binding.path.parentPath.insertAfter(decl)
+              } else {
+                path.getStatementParent().insertBefore(decl)
+              }
               this.refs.push({
                 type,
                 id,
-                fn: expr
+                fn: t.memberExpression(t.thisExpression(), expr)
               })
-            }
-          } else if (t.isIdentifier(expr)) {
-            const type = DEFAULT_Component_SET.has(componentName) ? 'dom' : 'component'
-            const binding = path.scope.getBinding(expr.name)
-            const decl = t.expressionStatement(
-              t.assignmentExpression(
-                '=',
-                t.memberExpression(t.thisExpression(), expr),
-                expr
-              )
-            )
-            if (binding) {
-              binding.path.parentPath.insertAfter(decl)
             } else {
-              path.getStatementParent().insertBefore(decl)
+              throw codeFrameError(refAttr, 'ref 仅支持传入匿名箭头函数和 class 中已声明的函数')
             }
-            this.refs.push({
-              type,
-              id,
-              fn: t.memberExpression(t.thisExpression(), expr)
-            })
-          } else {
-            throw codeFrameError(refAttr, 'ref 仅支持传入字符串、匿名箭头函数和 class 中已声明的函数')
           }
         }
-        if (Adapters.alipay === Adapter.type) {
+
+        if (Adapters.weapp === Adapter.type && type === 'component') {
+          attrs.push(t.jSXAttribute(
+            t.jSXIdentifier('_ref_'),
+            refAttr.value
+          ))
+        } else if (Adapters.alipay === Adapter.type) {
           attrs.push(t.jSXAttribute(
             t.jSXIdentifier('onTaroCollectChilds'),
             t.jSXExpressionContainer(t.memberExpression(t.thisExpression(), t.identifier('$collectChilds')))
           ))
         }
+
+        // 删除 ref 属性
         for (const [index, attr] of attrs.entries()) {
           if (attr === refAttr) {
             attrs.splice(index, 1)
